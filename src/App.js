@@ -1,22 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useState } from "react";
 
 function App() {
+  const [walletAdderess, setWalletAddress] = useState("");
+  const [connected, setConnected] = useState(false);
+
+  const requestAccounts = async () => {
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({
+          method: "eth_requestAccounts",
+        });
+        setWalletAddress(accounts[0]);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setConnected(true);
+      }
+      return;
+    }
+
+    return console.log("error, not found");
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <div className='App'>
+      <header className='App-header'>
+        <button onClick={requestAccounts}>Connect Wallet</button>
+        {connected && <h3>Wallet Address: {walletAdderess}</h3>}
       </header>
     </div>
   );
